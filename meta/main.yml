@@ -1,0 +1,16 @@
+---
+galaxy_info:
+  author: Reza Jelveh
+  description: A role to manage ipfilter rules on SmartOS and LX zones.
+  company: N/A
+  issue_tracker_url: https://github.com/fishman/ansible-role-firewall/issues
+  license: BSD
+  min_ansible_version: 1.2
+  platforms:
+  - name: Solaris
+    versions:
+      - all
+  categories:
+    - networking
+    - system
+dependencies: []
