@@ -1,0 +1,22 @@
+# {{ ansible_managed }}
+#
+# ipf.conf
+#
+# IP Filter rules to be loaded during startup
+#
+# See ipf(4) manpage for more information on
+# IP Filter rules syntax.
+{% set merged = firewall_v6_default_rules.copy() %}
+{% set _ = merged.update(firewall_v6_group_rules) %}
+{% set _ = merged.update(firewall_v6_host_rules) %}
+
+{% for group, rules in merged|dictsort  %}
+# {{ group }}
+{% if not rules %}
+# (none)
+{% endif %}
+{% for rule in rules %}
+{{ rule }}
+{% endfor %}
+
+{% endfor %}

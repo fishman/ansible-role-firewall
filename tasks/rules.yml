@@ -1,0 +1,37 @@
+---
+- name: Ensure ipf directory exists
+  file:
+    path: /etc/ipf
+    owner: root
+    group: sys
+    state: directory
+
+- name: Generate v4 rules
+  template: src=generated.v4.j2 dest=/etc/ipf/ipf.conf.changed owner=root group=sys mode=644
+  register: v4_script
+  when: firewall_v4_configure
+
+- name: Load v4 rules
+  command: >
+    {{ ipf_path }}
+    -E -Fa -f /etc/ipf/ipf.conf.changed
+  register: v4_script_load_result
+  failed_when: >-
+    v4_script_load_result.rc != 0 or
+    'syntax error' in v4_script_load_result.stderr
+  when: v4_script|changed
+
+- name: Generate v6 rules
+  template: src=generated.v6.j2 dest=/etc/ipf/ipf6.conf.changed owner=root group=sys mode=644
+  register: v6_script
+  when: firewall_v6_configure
+
+- name: Load v6 rules
+  command: >
+    {{ ipf_path }}
+    -E -6 -f /etc/ipf/ipf6.conf.changed
+  register: v6_script_load_result
+  failed_when: >-
+    v6_script_load_result.rc != 0 or
+    'syntax error' in v4_script_load_result.stderr
+  when: v6_script|changed
