@@ -5,10 +5,10 @@
     - "../vars/empty.yml"
   tags: [always]
 
-- include: rules.yml
+- import_tasks: rules.yml
 
-- include: persist-debian.yml
+- include_tasks: persist-debian.yml
   when: ansible_os_family == 'Debian'
 
-- include: persist-solaris.yml
+- include_tasks: persist-solaris.yml
   when: ansible_os_family == 'Solaris'

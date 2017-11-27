@@ -1,15 +1,7 @@
-- name: Update ipf.conf
-  command: mv /etc/ipf/ipf.conf.changed /etc/ipf/ipf.conf
-  when: v4_script|changed
+- name: ipfilter | Create unit file
+  template: src=ipfilter.service.j2 dest=/etc/systemd/system/ipfilter.service
+  when: ansible_service_mgr == 'systemd'
 
-- name: Update ipf6.conf
-  command: mv /etc/ipf/ipf6.conf.changed /etc/ipf/ipf6.conf
-  when: v4_script|changed
-  # notify: ipfilter
-
-# - name: ipfilter | Create unit file
-#   template: src=ipfilter.service.j2 dest=/etc/systemd/system/ipfilter.service
-#
-- name: ipfilter | ifup.d
-  template: mode=0755 src=ifup.sh.j2 dest=/etc/network/if-up.d/ipfilter
-
+- name: ipfilter | Create old init.d file
+  template: src=debian_service.j2 dest=/etc/init.d/ipfilter mode=0755
+  when: ansible_service_mgr == 'service'

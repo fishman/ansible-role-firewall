@@ -35,3 +35,13 @@
     v6_script_load_result.rc != 0 or
     'syntax error' in v4_script_load_result.stderr
   when: v6_script|changed
+
+- name: Save changed ipf.conf
+  command: cp /etc/ipf/ipf.conf.changed /etc/ipf/ipf.conf
+  when: v4_script|changed
+  notify: restart ipfilter
+
+- name: Save changed ipf6.conf
+  command: cp /etc/ipf/ipf6.conf.changed /etc/ipf/ipf6.conf
+  when: v4_script|changed
+  notify: restart ipfilter

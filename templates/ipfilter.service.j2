@@ -3,7 +3,7 @@ Description=native ipfilter service
 
 [Service]
 Type=oneshot
-ExecStart=/bin/bash -c "/native/usr/sbin/ipf -E -Fa -f /etc/ipf/ipf.conf ; /native/usr/sbin/ipf -E -6 -f /etc/ipf/ipf6.conf"
+ExecStart=/bin/bash -c "/native/usr/sbin/ipf -E -Fa -f /etc/ipf/ipf.conf ; /native/usr/sbin/ipf -E -6 -Fa -f /etc/ipf/ipf6.conf"
 ExecStop=/native/usr/sbin/ipf -D
 RemainAfterExit=yes
 

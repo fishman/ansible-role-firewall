@@ -1,0 +1,70 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          ipfilter
+# Required-Start:    $local_fs $network $named $time $syslog
+# Required-Stop:     $local_fs $network $named $time $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Description:       Solaris LX Zone ipfilter wrapper
+### END INIT INFO
+
+NATIVE_PATH=/native/usr/sbin
+IPF="$NATIVE_PATH/ipf"
+IPFSTAT="$NATIVE_PATH/ipfstat"
+RUNAS=root
+NAME=ipfilter
+
+PIDFILE=
+LOGFILE=
+
+start() {
+  echo 'Starting service…' >&2
+  local CMD="$IPF -E -Fa -f /etc/ipf/ipf.conf"
+  local CMD2="$IPF -E -6 -Fa -f /etc/ipf/ipf6.conf"
+  su -c "$CMD" $RUNAS
+  su -c "$CMD2" $RUNAS
+  echo 'Service started' >&2
+}
+
+stop() {
+  {# echo 'Stopping service…' >&2 #}
+  echo 'Service stopped' >&2
+}
+
+reload() {
+  echo 'Reloading configuration' >&2
+  local CMD="$IPF -E -Fa -f /etc/ipf/ipf.conf"
+  local CMD2="$IPF -E -6 -Fa -f /etc/ipf/ipf6.conf"
+  su -c "$CMD" $RUNAS
+  su -c "$CMD2" $RUNAS
+  echo 'Configuration reloaded' >&2
+}
+
+status() {
+  local CMD="$IPFSTAT -io"
+  local CMD2="$IPFSTAT -6 -io"
+  su -c "$CMD" $RUNAS
+  su -c "$CMD2" $RUNAS
+}
+
+
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  status)
+    status
+    ;;
+  reload)
+    reload
+    ;;
+  restart)
+    stop
+    start
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|status|restart|reload}"
+esac

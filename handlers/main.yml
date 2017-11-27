@@ -1,4 +1,4 @@
-- name: ipfilter
+- name: restart ipfilter
   service:
     name: ipfilter
     state: restarted
