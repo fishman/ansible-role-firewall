@@ -5,31 +5,55 @@ firewall_v4_configure: true
 firewall_v6_configure: true
 
 firewall_v4_default_rules:
+  000 block all inbound traffic from non-routable or reserved address spaces:
+    - block in quick on net0 from 127.0.0.0/8 to any       #loopback
+    - block in quick on net0 from 0.0.0.0/8 to any         #loopback
+    - block in quick on net0 from 169.254.0.0/16 to any    #DHCP auto-config
+    - block in quick on net0 from 192.0.2.0/24 to any      #reserved for docs
+    - block in quick on net0 from 204.152.64.0/23 to any   #Sun cluster interconnect
+    - block in quick on net0 from 224.0.0.0/3 to any       #Class D & E multicast
   001 default policies:
-    - pass out quick proto udp from any to any port = 53
+    - pass out all keep state
+    - block in all
+    - pass out quick proto tcp from any to any port = 53 flags S keep state
+    - pass out quick proto udp from any to any port = 53 keep state
+    - pass out quick proto tcp from any to any port = 80 flags S keep state
+    - pass out quick proto tcp from any to any port = 443 flags S keep state
   002 allow loopback:
     - pass in quick on lo0 all
     - pass out quick on lo0 all
   003 allow ping replies:
     - pass out quick proto icmp all keep state
     - pass in quick proto icmp all keep state
+  004 block OS fingerprint attempts and log first occurrence:
+    - block in log first quick proto tcp from any to any flags FUP
+  005 block public pings and ident:
+    - block in quick proto icmp all icmp-type 8
+    - block in quick proto tcp from any to any port = 113
   200 allow ssh:
     - pass in proto tcp from any to any port = 22 flags S/FSRPAU keep state keep frags
-
 firewall_v4_group_rules: {}
 firewall_v4_host_rules: {}
 
 firewall_v6_default_rules:
   001 default policies:
-    # - block return-rst in log first proto tcp all
-    # - block return-icmp(host-unr) in log proto udp all
-    - pass out quick proto udp from any to any port = 53
+    - pass out all keep state
+    - block in all
+    - pass out quick proto tcp from any to any port = 53 flags S keep state
+    - pass out quick proto udp from any to any port = 53 keep state
+    - pass out quick proto tcp from any to any port = 80 flags S keep state
+    - pass out quick proto tcp from any to any port = 443 flags S keep state
   002 allow loopback:
     - pass in quick on lo0 all
     - pass out quick on lo0 all
   003 allow ping replies:
     - pass out quick proto icmp all keep state
     - pass in quick proto icmp all keep state
+  004 block OS fingerprint attempts and log first occurrence:
+    - block in log first quick proto tcp from any to any flags FUP
+  005 block public pings and ident:
+    - block in quick proto icmp all icmp-type 8
+    - block in quick proto tcp from any to any port = 113
   200 allow ssh:
     - pass in proto tcp from any to any port = 22 flags S/FSRPAU keep state keep frags
 firewall_v6_group_rules: {}
