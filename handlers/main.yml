@@ -1,0 +1,5 @@
+- name: ipfilter
+  service:
+    name: ipfilter
+    state: restarted
+    enabled: yes
