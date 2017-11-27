@@ -6,7 +6,9 @@ firewall_v6_configure: true
 
 firewall_v4_default_rules:
   001 default policies:
-    - block in log quick from 10.0.0.0/24 to 10.10.0.0/24
+    - block return-rst in log first proto tcp all
+    - block return-icmp(host-unr) in log proto udp all
+    - pass out quick proto udp from any to any port = 53
   002 allow loopback:
     - pass in quick on lo0 all
     - pass out quick on lo0 all
@@ -20,6 +22,19 @@ firewall_v4_default_rules:
 firewall_v4_group_rules: {}
 firewall_v4_host_rules: {}
 
-firewall_v6_default_rules: {}
+firewall_v6_default_rules:
+  001 default policies:
+    - block return-rst in log first proto tcp all
+    - block return-icmp(host-unr) in log proto udp all
+    - pass out quick proto udp from any to any port = 53
+  002 allow loopback:
+    - pass in quick on lo0 all
+    - pass out quick on lo0 all
+  003 allow ping replies:
+    - pass out quick proto icmp all keep state
+    - pass in quick proto icmp all keep state
+
+  200 allow ssh:
+    - pass in proto tcp from any to any port = 22 flags S/FSRPAU keep state keep frags
 firewall_v6_group_rules: {}
 firewall_v6_host_rules: {}
